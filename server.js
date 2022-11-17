@@ -1,6 +1,7 @@
-import 'dotenv/config';
-import cors from 'cors';
-import express from 'express';
+//import 'dotenv/config';
+var cors = require("cors");  
+const express = require("express");
+const env = require("dotenv");
 var bodyParser = require('body-parser');  
 const connectDB = require("./config/db");
 const jwt = require("jsonwebtoken");
@@ -27,5 +28,5 @@ app.use('/qr',require("./routes/qr"));
 app.use('/order',require("./routes/order"));
 app.use('/seq',require("./routes/order"));
 app.listen(process.env.PORT, () =>
-  console.log(`Example app listening on port 3000!`),
+  console.log(`Example app listening on port 4000!`),
 );
