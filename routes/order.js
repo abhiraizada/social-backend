@@ -33,7 +33,7 @@ router.get("/test", async (req, res) => {
     }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/orderid/:id", async (req, res) => {
     const query = { orderId: req.params.id };
     
     try {
@@ -69,8 +69,7 @@ router.get("/allOrders", async (req, res) => {
     try {
           let data = await Order.find({ createdAt : "2022-11-17T11:30:49.857Z" })
  //let data=await Order.find()
- console.log(data)
-        res.status(200).json({ data: data });
+        res.status(200).json({ orders: data });
     } catch (err) {
         res.status(500).json("Server Error!")
         // console.log(err);

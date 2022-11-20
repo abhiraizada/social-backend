@@ -38,8 +38,8 @@ function calculateBill(currentOrders) {
 }
 router.post("/createBill", async (req, res) => {
     try {
-        let { tableId } = req.body
-        let tableData = await Table.findOneAndUpdate({ tableId: tableId }, {$set: { currentOrders: [] , status:'vacant'} } )
+        let { tableNumber } = req.body
+        let tableData = await Table.findOneAndUpdate({ tableNumber: tableNumber }, {$set: { currentOrders: [] , status:'vacant'} } )
         let billAmount = calculateBill(tableData.currentOrders)
         res.status(200).json({ billAmount });
     } catch (err) {
