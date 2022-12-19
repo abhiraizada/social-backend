@@ -1,6 +1,6 @@
-import 'dotenv/config';
-import cors from 'cors';
-import express from 'express';
+const express = require("express");
+const cors = require("cors");
+
 var bodyParser = require('body-parser');  
 const connectDB = require("./config/db");
 const jwt = require("jsonwebtoken");
