@@ -1,79 +1,71 @@
-const { nanoid } = require("nanoid");
-const PostModel = require("../models/postModel");
+const Order = require("../model/order");
+const Table = require("../model/table");
+  const sse = require("../sse");
 
 const getOrdersService = async () => {
-//   try {
-//     const posts = await PostModel.find();
-//     const _length = posts.length;
-//     const message = _length === 0 ? "Not found" : "success";
-//     const error = _length === 0 ? true : false;
-//     const statusCode = _length === 0 ? 404 : 200;
-//     return { data: posts, error, message, statusCode };
-//   } catch (error) {
-//     return {
-//       data: [],
-//       error: true,
-//       message: "Sorry an error occurred",
-//       statusCode: 500,
-//     };
-//   }
-try {
-    const order = await Order.findOne(query);
+    //   try {
+    //     const posts = await PostModel.find();
+    //     const _length = posts.length;
+    //     const message = _length === 0 ? "Not found" : "success";
+    //     const error = _length === 0 ? true : false;
+    //     const statusCode = _length === 0 ? 404 : 200;
+    //     return { data: posts, error, message, statusCode };
+    //   } catch (error) {
+    //     return {
+    //       data: [],
+    //       error: true,
+    //       message: "Sorry an error occurred",
+    //       statusCode: 500,
+    //     };
+    //   }
+    try {
 
-    res.status(201).json({ order });
-} catch (err) {
-    console.log(err);
-    res.status(500).json({ message: "Server Error" });
-}
+        const orders = await Order.find();
+        const _length = orders.length;
+        const message = _length === 0 ? "Not found" : "success";
+        const error = _length === 0 ? true : false;
+        const statusCode = _length === 0 ? 404 : 200;
+        return { data: orders, error, message, statusCode };
+    } catch (err) {
+        return {
+            data: [],
+            error: true,
+            message: "Sorry an error occurred",
+            statusCode: 500,
+        };
+    }
 };
+const createOrderService = async (body) => {
+    try {
+        let { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount, tableId } = body
+        const order = await Order.create({
+            orderItems, email, orderStatus, paymentStatus, orderType, orderAmount
+        });
+        await Table.updateOne({ tableId: tableId },
+            {
+                $set: {
+                    currentOrders: { $push: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount } },
+                    status: 'occupied'
+                }
+            })
+            console.log("here")
 
-const createPostService = async (post) => {
-  try {
-    const _post = await PostModel.create(post);
-    return { data: [_post], error: false, message: "success", statusCode: 200 };
-  } catch (error) {
-    return {
-      data: [],
-      error: true,
-      message: "Sorry an error occurred",
-      statusCode: 500,
-    };
-  }
+        const _length = order.length;
+        const message = _length === 0 ? "Not found" : "success";
+        const error = _length === 0 ? true : false;
+        const statusCode = _length === 0 ? 404 : 200;
+
+        return { data: order, error, message, statusCode };
+    } catch (err) {
+        return {
+            data: [],
+            error: true,
+            message: "Sorry an error occurred",
+            statusCode: 500,
+        };
+    }
 };
-
-const updatePostReaction = async (postId, userId) => {
-  try {
-    const post = await PostModel.findByIdAndUpdate(
-      postId,
-      { $push: { likers: userId } },
-      { new: true }
-    );
-    return { data: [post], error: false, message: "success", statusCode: 200 };
-  } catch (error) {
-    return {
-      data: [],
-      error: true,
-      message: "Sorry an error occurred",
-      statusCode: 500,
-    };
-  }
-};
-
-const createNotification = ({ postId, authorId, userId }) => {
-  return {
-    id: nanoid(),
-    userId: authorId,
-    title: `Your post has been liked by user ${userId}`,
-    type: "post",
-    meta: {
-      id: postId,
-    },
-  };
-};
-
 module.exports = {
-  getPostsService,
-  createPostService,
-  updatePostReaction,
-  createNotification,
+    getOrdersService,
+    createOrderService
 };

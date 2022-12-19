@@ -1,11 +1,11 @@
-//import 'dotenv/config';
-var cors = require("cors");  
-const express = require("express");
-const env = require("dotenv");
+import 'dotenv/config';
+import cors from 'cors';
+import express from 'express';
 var bodyParser = require('body-parser');  
 const connectDB = require("./config/db");
 const jwt = require("jsonwebtoken");
 const qrcode = require("qrcode");
+const sseRoute = require("./routes/sse");
 
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
@@ -23,11 +23,15 @@ app.get('/', (req, res) => {
 app.post('/post',(req,res)=>{
     res.json({success:true})
 })
+app.use(function (req, res, next) {
+  res.flush = function () { /* Do nothing */ }
+  next();
+})
+app.use(sseRoute);
 app.use('/auth',require("./routes/auth"));
 app.use('/qr',require("./routes/qr"));
 app.use('/order',require("./routes/order"));
 app.use('/seq',require("./routes/order"));
-app.use('/table', require("./routes/table"))
 app.listen(process.env.PORT, () =>
-  console.log(`Example app listening on port 4000!`),
+  console.log(`Example app listening on port 3000!`),
 );
