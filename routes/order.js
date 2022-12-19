@@ -78,7 +78,7 @@ router.get("/allOrders", async (req, res) => {
     try {
         let data = await Order.find({ createdAt: "2022-11-17T11:30:49.857Z" })
         //let data=await Order.find()
-        res.status(200).json({ orders: data });
+        res.status(200).json(data);
     } catch (err) {
         res.status(500).json("Server Error!")
         // console.log(err);
