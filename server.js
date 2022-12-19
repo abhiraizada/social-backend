@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 const connectDB = require("./config/db");
 const jwt = require("jsonwebtoken");
 const qrcode = require("qrcode");
+const sseRoute = require("./routes/sse");
 
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })  
@@ -22,6 +23,11 @@ app.get('/', (req, res) => {
 app.post('/post',(req,res)=>{
     res.json({success:true})
 })
+app.use(function (req, res, next) {
+  res.flush = function () { /* Do nothing */ }
+  next();
+})
+app.use(sseRoute);
 app.use('/auth',require("./routes/auth"));
 app.use('/qr',require("./routes/qr"));
 app.use('/order',require("./routes/order"));
