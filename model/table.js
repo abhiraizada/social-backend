@@ -6,7 +6,7 @@ const tableSchema = new mongoose.Schema({
 
     emailId: { type: String, default: null },
     currentOrders: { type: Array, default: null },
-    status: { type: String , default: null },
+    status: { type: String , default: "available" },
     occupiedAt: { type: Date, default: null  }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
