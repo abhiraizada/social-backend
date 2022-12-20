@@ -49,18 +49,16 @@ router.get("/orderid/:id", async (req, res) => {
 });
 
 router.post("/createOrder", async (req, res) => {
-    // let orderId = await getValueForNextSequence('orderId')
-    // console.log('orderId', orderId)
     try {
-        let { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount, tableId } = req.body
+        let { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount, tableNumber } = req.body
 
         const order = await Order.create({
             orderItems, email, orderStatus, paymentStatus, orderType, orderAmount
         });
-        await Table.updateOne({ tableId: tableId },
+        await Table.updateOne({ tableNumber: tableNumber },
             {
                 $set: {
-                    currentOrders: { $push: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount } },
+                    currentOrders: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount },
                     status: 'occupied'
                 }
             })

@@ -1,5 +1,5 @@
 // const tableSchema = new mongoose.Schema({
-//     tableId: { type: Number, required: true, unique: true },
+//     tableNumber: { type: Number, required: true, unique: true },
 //     emailId: { type: String, default: null },
 //     currentOrders: { type: Array, default: null },
 //     status: { type: String , default: null },
@@ -32,8 +32,8 @@ async function getValueForNextSequence(sequenceOfName) {
 
 router.post("/createTable", async (req, res) => {
     try {
-        let { tableId } = req.body
-        let data = await Table.create({ tableId: tableId })
+        let { tableNumber, capacity } = req.body
+        let data = await Table.create({ tableNumber: tableNumber, capacity:capacity })
         res.status(200).json({ data: data });
     } catch (err) {
         res.status(500).json("Server Error!")
@@ -41,4 +41,15 @@ router.post("/createTable", async (req, res) => {
     }
 });
 
+router.get("/allTables", async (req, res) => {
+    try {
+        console.log('here')
+        let data = await Table.find({})
+        //let data=await Order.find()
+        res.status(200).json(data);
+    } catch (err) {
+        res.status(500).json("Server Error!")
+        // console.log(err);
+    }
+});
 module.exports = router;

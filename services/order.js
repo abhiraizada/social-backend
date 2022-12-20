@@ -37,11 +37,11 @@ const getOrdersService = async () => {
 };
 const createOrderService = async (body) => {
     try {
-        let { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount, tableId } = body
+        let { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount, tableNumber } = body
         const order = await Order.create({
             orderItems, email, orderStatus, paymentStatus, orderType, orderAmount
         });
-        await Table.updateOne({ tableId: tableId },
+        await Table.updateOne({ tableNumber: tableNumber },
             {
                 $set: {
                     currentOrders: { $push: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount } },

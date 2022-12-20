@@ -10,7 +10,7 @@ const orderSchema = new mongoose.Schema({
     paymentStatus: { type: String, default: null, required: true },
     orderType: { type: String, default: null },
     orderAmount: { type: Number, required: true },
-    tableId: { type: Number, default: 1 },
+    tableNumber: { type: Number, default: 1 },
     
 
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });

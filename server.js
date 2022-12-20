@@ -29,9 +29,11 @@ app.use(function (req, res, next) {
 })
 app.use(sseRoute);
 app.use('/auth',require("./routes/auth"));
+app.use('/table',require("./routes/table"));
+
 app.use('/qr',require("./routes/qr"));
 app.use('/order',require("./routes/order"));
 app.use('/seq',require("./routes/order"));
 app.listen(process.env.PORT, () =>
-  console.log(`Example app listening on port 3000!`),
+  console.log(`Example app listening on port`, process.env.PORT),
 );
