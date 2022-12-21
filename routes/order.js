@@ -55,17 +55,26 @@ router.post("/createOrder", async (req, res) => {
         const order = await Order.create({
             orderItems, email, orderStatus, paymentStatus, orderType, orderAmount
         });
-        await Table.updateOne({ tableNumber: tableNumber },
-            {
-                $set: {
-                    currentOrders: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount },
-                    status: 'occupied'
-                }
-            })
-        sse.send(order, "order_created");
+        const query = { tableNumber: tableNumber };
 
-        res.status(200).json({ message: "Order Placed" })
+        const orderTable = await Table.findOne(query);
 
+        if (orderTable?.tableNumber != tableNumber) {
+            res.status(500).json({ message: "Cannot place an order because of invalid table number" })
+        }
+
+        else {
+            await Table.updateOne({ tableNumber: tableNumber },
+                {
+                    $set: {
+                        currentOrders: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount },
+                        status: 'occupied'
+                    }
+                })
+            sse.send(order, "order_created");
+
+            res.status(200).json({ message: "Order Placed" })
+        }
     } catch (err) {
         res.status(500).json("Server Error!")
         console.log(err);
@@ -75,11 +84,9 @@ router.post("/createOrder", async (req, res) => {
 router.get("/allOrders", async (req, res) => {
     try {
         let data = await Order.find({ createdAt: "2022-11-17T11:30:49.857Z" })
-        //let data=await Order.find()
         res.status(200).json(data);
     } catch (err) {
         res.status(500).json("Server Error!")
-        // console.log(err);
     }
 });
 

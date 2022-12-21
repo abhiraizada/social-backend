@@ -32,8 +32,8 @@ async function getValueForNextSequence(sequenceOfName) {
 
 router.post("/createTable", async (req, res) => {
     try {
-        let { tableNumber, capacity } = req.body
-        let data = await Table.create({ tableNumber: tableNumber, capacity:capacity })
+        let { tableNumber, capacity, notes } = req.body
+        let data = await Table.create({ tableNumber: tableNumber, capacity:capacity, notes:notes })
         res.status(200).json({ data: data });
     } catch (err) {
         res.status(500).json("Server Error!")
