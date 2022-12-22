@@ -30,6 +30,7 @@ app.use(function (req, res, next) {
 app.use(sseRoute);
 app.use('/auth',require("./routes/auth"));
 app.use('/table',require("./routes/table"));
+app.use('/item',require("./routes/item"));
 
 app.use('/qr',require("./routes/qr"));
 app.use('/order',require("./routes/order"));
