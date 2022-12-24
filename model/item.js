@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
-require('dotenv').config()
 
-const AutoIncrement = require('mongoose-sequence')(mongoose);
+//const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const itemSchema = new mongoose.Schema({
     itemName: { type: String, default: null,required: true, unique: true },
@@ -26,6 +25,7 @@ const itemSchema = new mongoose.Schema({
     productionCost:{type:Number, default: null}
 });
 
-itemSchema.plugin(AutoIncrement, {inc_field: 'itemId'});
+//itemSchema.plugin(AutoIncrement, {inc_field: 'itemId'});
 
-module.exports = mongoose.model("item", itemSchema);
+//module.exports = mongoose.model("item", itemSchema);
+module.exports = mongoose.models.Item || mongoose.model('Item', itemSchema);

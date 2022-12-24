@@ -5,7 +5,7 @@ const Seq = require("../model/seq");
 const express = require('express')
 const router = express.Router();
 const sse = require("../sse");
-// const Item = require("../model/item");
+const Item = require("../model/item");
 
 // const bcrypt = require('bcrypt')
 // const jwt = require("jsonwebtoken");
@@ -53,11 +53,11 @@ router.post("/createOrder", async (req, res) => {
     try {
         let { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount, tableNumber } = req.body
 
-        
+
         const orderQuery = { tableNumber: tableNumber };
 
         const orderTable = await Table.findOne(orderQuery);
-        
+
         //Abhimanyu Raizada : Wrtie code to increment orders key of each item in the order
         if (orderTable?.tableNumber != tableNumber) {
             res.status(500).json({ message: "Cannot place an order because of invalid table number" })
@@ -77,13 +77,10 @@ router.post("/createOrder", async (req, res) => {
             sse.send(order, "order_created");
 
             res.status(200).json({ message: "Order Placed" })
-            // orderItems.forEach(orderedItem => {
-            //     const itemQuery = { itemName: orderedItem.itemName };
+            orderItems.forEach(orderedItem => {
+                Item.findOneAndUpdate({ itemName: orderedItem.itemName }, { $inc: { 'orders': 1 } }).exec();
+            });
 
-            //     const item = Item.findOne(orderQuery);
-            //     console.log(item)
-
-            // });
         }
     } catch (err) {
         res.status(500).json("Server Error!")
@@ -93,7 +90,7 @@ router.post("/createOrder", async (req, res) => {
 
 router.get("/allOrders", async (req, res) => {
     try {
-        let data = await Order.find({ createdAt: "2022-11-17T11:30:49.857Z" })
+        let data = await Order.find({})
         res.status(200).json(data);
     } catch (err) {
         res.status(500).json("Server Error!")
