@@ -24,17 +24,6 @@ const Item = require("../model/item");
 //     return sequenceDoc.seq_val;
 // }
 
-router.get("/test", async (req, res) => {
-
-    try {
-
-        res.status(201)
-
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Server Error" });
-    }
-});
 
 router.get("/orderid/:id", async (req, res) => {
     const query = { orderId: req.params.id };
