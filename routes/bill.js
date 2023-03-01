@@ -10,7 +10,8 @@
 const Table = require("../model/table");
 const Order = require("../model/order");
 const Seq = require("../model/seq");
-const express = require('express')
+const express = require('express');
+const table = require("../model/table");
 const router = express.Router();
 // const bcrypt = require('bcrypt')
 // const jwt = require("jsonwebtoken");
@@ -36,12 +37,34 @@ function calculateBill(currentOrders) {
     })
     return sum
 }
-router.post("/createBill", async (req, res) => {
+router.post("/getBill", async (req, res) => {
     try {
         let { tableNumber } = req.body
-        let tableData = await Table.findOneAndUpdate({ tableNumber: tableNumber }, {$set: { currentOrders: [] , status:'vacant'} } )
-        let billAmount = calculateBill(tableData.currentOrders)
-        res.status(200).json({ billAmount });
+        let tableData = await Table.findOne({ tableNumber: tableNumber } )
+        if(tableData){
+            totalAmount=0
+            totals=[]
+            tableData?.currentOrders.map((order)=>{
+                order.orderItems.forEach(item=>{
+                    console.log(item)
+                    let itemAmount = item.price * item.quantity;
+                    itemAmount=Number((itemAmount*(1+item.tax/100)).toFixed(2))
+                    totalAmount += itemAmount;
+                    totals.push({
+                        itemName:item.name,
+                        itemQuantity:item.quantity,
+                        itemTotal:itemAmount
+                    })
+                })
+            })           
+            console.log(totals)
+            console.log(totalAmount)
+            let billAmount = calculateBill(tableData?.currentOrders)
+            res.status(200).json({ billAmount });
+        }
+        else{
+            res.status(404).json({"error":"Order Not found"})
+        }
     } catch (err) {
         res.status(500).json("Server Error!")
         console.log(err);

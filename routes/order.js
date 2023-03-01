@@ -37,17 +37,31 @@ router.get("/orderid/:id", async (req, res) => {
         res.status(500).json({ message: "Server Error" });
     }
 });
+router.get("/email/", async (req, res) => {
+    const query = { email: req.body.email, paymentStatus:'pending' };
 
+    try {
+        const order = await Order.find(query);
+
+        res.status(201).json({ order });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Server Error" });
+    }
+});
 router.post("/createOrder", async (req, res) => {
     try {
-        let { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount, tableNumber } = req.body
+        let { orderItems, email, orderType, tableNumber } = req.body
 
-
+        orderStatus=paymentStatus='pending'
         const orderQuery = { tableNumber: tableNumber };
 
         const orderTable = await Table.findOne(orderQuery);
-
-        //Abhimanyu Raizada : Wrtie code to increment orders key of each item in the order
+        orderAmount=0
+        orderItems?.forEach(orderItem => {
+            const itemAmount = orderItem.price * orderItem.quantity;
+            orderAmount += itemAmount;
+          });
         if (orderTable?.tableNumber != tableNumber) {
             res.status(500).json({ message: "Cannot place an order because of invalid table number" })
         }
@@ -77,6 +91,23 @@ router.post("/createOrder", async (req, res) => {
     }
 });
 
+// Update an order by ID
+router.put('/orderid/:id', async (req, res) => {
+    try {
+      const orderId = req.params.id;
+      const updates = req.body;
+      const options = { new: true }; // return the modified document
+  
+      const updatedOrder = await Order.findOneAndUpdate(orderId, updates, options);
+      if (!updatedOrder) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+      res.json(updatedOrder);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ message: 'Server Error' });
+    }
+  });
 router.get("/allOrders", async (req, res) => {
     try {
         let data = await Order.find({})
@@ -85,5 +116,26 @@ router.get("/allOrders", async (req, res) => {
         res.status(500).json("Server Error!")
     }
 });
+
+
+router.get('/total-order-amount', async (req, res) => {
+  try {
+    const orders = await Order.find({ paymentStatus: { $ne: 'complete' } });
+    // total=0
+    // orders?.orderItems?.forEach(item => {
+    //     total=total+orderAmount
+    // });
+    const totalAmount = orders.reduce((total, order) => {
+      return total + order.orderAmount;
+    }, 0);
+    res.status(200).json({ totalAmount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+module.exports = router;
+
 
 module.exports = router;

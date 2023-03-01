@@ -17,6 +17,9 @@ const offerSchema = new mongoose.Schema({
         type: Array,
         default: null
     },
+    itemCategory:{ type: Array, default: null },
+    itemSubCategory:{ type: Array, default: null },
+
     maximumDiscount: { type: Number, default: null },
     customerType: {
         type: Array,
@@ -26,6 +29,7 @@ const offerSchema = new mongoose.Schema({
         type: String,
         default: null
       },
+      
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
 module.exports = mongoose.model("offer", offerSchema);

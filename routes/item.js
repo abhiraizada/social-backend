@@ -22,10 +22,10 @@ router.get("/itemId/:id", async (req, res) => {
 
 router.post("/createItem", async (req, res) => {
     try {
-        let { itemName, price, availability, description, category, subCategory, offer, stock, prepTime, tags, options, nutrition, itemType, productionCost } = req.body
+        let { itemName, price, availability, description, category, subCategory, offer, stock, prepTime, tags, options, nutrition, itemType, productionCost, tax } = req.body
 
         const item = await Item.create({
-            itemName, price, availability, description, category,subCategory, offer, stock, prepTime, tags, options, nutrition, itemType, productionCost
+            itemName, price, availability, description, category,subCategory, offer, stock, prepTime, tags, options, nutrition, itemType, productionCost, tax
         });
 
         res.status(200).json({ message: "Item created" })

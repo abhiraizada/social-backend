@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const itemSchema = new mongoose.Schema({
     itemName: { type: String, default: null,required: true, unique: true },
     price: { type: Number, required: true },
-    availability: {type: String, default: true },
+    availability: {type: Boolean, default: true },
     description: {type: String, default: null, required: true },
     category: {type: String, default: null, required: true },
     subCategory:{type: String, default: null, required: true },
@@ -22,7 +22,8 @@ const itemSchema = new mongoose.Schema({
     },
     itemType:{type:String, default: null},
     orders:{type:Number, default: 0},
-    productionCost:{type:Number, default: null}
+    productionCost:{type:Number, default: null},
+    tax:{type:Number, default:0}
 });
 
 //itemSchema.plugin(AutoIncrement, {inc_field: 'itemId'});
