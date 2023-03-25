@@ -35,12 +35,21 @@ app.get('/', (req, res) => {
   const userEmail = req.cookies;
   console.log(userEmail)
   if (userEmail) {
-    console.log(`Stored email: ${userEmail}`);
+    res.send(`Hello! ${Object.keys(userEmail)}` );
   } else {
     console.log('No stored email found');
   }
 
-  res.send(`Hello! ${Object.keys(userEmail)}` );
+});
+app.delete('/', (req, res) => {
+  try {
+    res.clearCookie("userEmail");
+    console.log(req.cookies);
+    res.status(200).send("Cookie deleted successfully.");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting cookie.");
+  }
 });
 app.post('/post',(req,res)=>{
     res.json({success:true})
