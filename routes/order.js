@@ -81,7 +81,7 @@ router.post("/createOrder", async (req, res) => {
 
             res.status(200).json({ message: "Order Placed" })
             orderItems.forEach(orderedItem => {
-                Item.findOneAndUpdate({ itemName: orderedItem.itemName }, { $inc: { 'orders': 1 } }).exec();
+                Item.findOneAndUpdate({ itemName: orderedItem.itemName }, { $inc: { 'orders': orderedItem.quantity  } }).exec();
             });
 
         }

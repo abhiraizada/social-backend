@@ -18,7 +18,6 @@ const itemSchema = new mongoose.Schema({
         calories:{type: Number},
         protein:{type: Number},
         fat:{type: Number}
-
     },
     itemType:{type:String, default: null},
     orders:{type:Number, default: 0},

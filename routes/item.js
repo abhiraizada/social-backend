@@ -44,5 +44,26 @@ router.get("/allItems", async (req, res) => {
         res.status(500).json("Server Error!")
     }
 });
+router.put("/updateItem", async (req, res) => {
+    const { _id,itemName, price, availability, description, category, subCategory, offer, stock, prepTime, tags, options, nutrition, itemType, productionCost, tax } = req.body;
+  
+    try {
+      const item = await Item.findOneAndUpdate(
+        { _id: _id },
+        { itemName, price, availability, description, category, subCategory, offer, stock, prepTime, tags, options, nutrition, itemType, productionCost, tax },
+        { new: true }
+      );
+  
+      if (!item) {
+        return res.status(404).json({ message: "Item not found" });
+      }
+  
+      res.status(200).json({ message: "Item updated", item });
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+  
 
 module.exports = router;
