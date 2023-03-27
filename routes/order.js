@@ -81,7 +81,7 @@ router.post("/createOrder", async (req, res) => {
 
             res.status(200).json({ message: "Order Placed" })
             orderItems.forEach(orderedItem => {
-                Item.findOneAndUpdate({ itemName: orderedItem.itemName }, { $inc: { 'orders': orderedItem.quantity  } }).exec();
+                Item.findOneAndUpdate({ itemName: orderedItem.itemName }, { $inc: { 'orders': orderedItem.quantity, 'stock': -orderedItem.quantity    }  } ).exec();
             });
 
         }
@@ -91,21 +91,20 @@ router.post("/createOrder", async (req, res) => {
     }
 });
 
-// Update an order by ID
-router.put('/orderid/:id', async (req, res) => {
+router.put('/orderid/:orderId', async (req, res) => {
     try {
-      const orderId = req.params.id;
-      const updates = req.body;
-      const options = { new: true }; // return the modified document
-  
-      const updatedOrder = await Order.findOneAndUpdate(orderId, updates, options);
+      const updatedOrder = await Order.findOneAndUpdate(
+        { orderId: req.params.orderId },
+        { $set: { orderStatus: req.body.orderStatus } },
+        { new: true }
+      );
       if (!updatedOrder) {
-        return res.status(404).json({ message: 'Order not found' });
+        return res.status(404).send({ message: 'Order not found' });
       }
-      res.json(updatedOrder);
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).json({ message: 'Server Error' });
+      res.send(updatedOrder);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ message: 'Server error' });
     }
   });
 router.get("/allOrders", async (req, res) => {
@@ -116,8 +115,15 @@ router.get("/allOrders", async (req, res) => {
         res.status(500).json("Server Error!")
     }
 });
-
-
+router.get('/active', async (req, res) => {
+    try {
+      const orders = await Order.find({ orderStatus: { $ne: "complete" } });
+      res.json(orders);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  });
+  
 router.get('/total-order-amount', async (req, res) => {
   try {
     const orders = await Order.find({ paymentStatus: { $ne: 'complete' } });
@@ -134,8 +140,5 @@ router.get('/total-order-amount', async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 });
-
-module.exports = router;
-
 
 module.exports = router;
