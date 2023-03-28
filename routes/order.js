@@ -59,8 +59,11 @@ router.post("/createOrder", async (req, res) => {
         const orderTable = await Table.findOne(orderQuery);
         orderAmount=0
         orderItems?.forEach(orderItem => {
-            const itemAmount = orderItem.price * orderItem.quantity;
-            orderAmount += itemAmount;
+            let itemAmount = orderItem.price * orderItem.quantity;
+                itemAmount=itemAmount+(itemAmount*(orderItem.tax)/100)
+                
+            orderAmount += Math.round(itemAmount * 100) / 100;
+            
           });
         if (orderTable?.tableNumber != tableNumber) {
             res.status(500).json({ message: "Cannot place an order because of invalid table number" })
@@ -70,15 +73,17 @@ router.post("/createOrder", async (req, res) => {
             const order = await Order.create({
                 orderItems, email, orderStatus, paymentStatus, orderType, orderAmount
             });
+            
             await Table.updateOne({ tableNumber: tableNumber },
                 {
-                    $set: {
-                        currentOrders: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount },
-                        status: 'occupied'
-                    }
+                  $push: {
+                    currentOrders: { orderItems, email, orderStatus, paymentStatus, orderType, orderAmount },
+                  },
+                  $set: {
+                    status: 'occupied',
+                  }
                 })
             sse.send(order, "order_created");
-
             res.status(200).json({ message: "Order Placed" })
             orderItems.forEach(orderedItem => {
                 Item.findOneAndUpdate({ itemName: orderedItem.itemName }, { $inc: { 'orders': orderedItem.quantity, 'stock': -orderedItem.quantity    }  } ).exec();
