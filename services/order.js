@@ -48,7 +48,6 @@ const createOrderService = async (body) => {
                     status: 'occupied'
                 }
             })
-            console.log("here")
 
         const _length = order.length;
         const message = _length === 0 ? "Not found" : "success";

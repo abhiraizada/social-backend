@@ -43,7 +43,6 @@ router.post("/createTable", async (req, res) => {
 
 router.get("/allTables", async (req, res) => {
     try {
-        console.log('here')
         let data = await Table.find({})
         //let data=await Order.find()
         res.status(200).json(data);
